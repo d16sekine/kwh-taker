@@ -1,9 +1,9 @@
-const yaml = require('js-yaml');
-const fs = require('fs');
-const puppeteer = require('puppeteer');
-const utils = require('./src/utils.js')
+const yaml = require("js-yaml");
+const fs = require("fs");
+const puppeteer = require("puppeteer");
+const utils = require("./utils.js");
 
-let config = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'));
+let config = yaml.safeLoad(fs.readFileSync("./config.yml", "utf8"));
         
 
 puppeteer.launch({
@@ -19,14 +19,14 @@ puppeteer.launch({
     await page.type("#idId", config.userId);
     await page.type("#idPassword", config.password);
 
-    await page.click('#idLogin');
+    await page.click("#idLogin");
 
     //↓上手く行かないので、単純にwait
-    //await page.waitForNavigation({waitUntil: 'domcontentloaded'});
+    //await page.waitForNavigation({waitUntil: "domcontentloaded"});
     await page.waitFor(5000);
 
     const divbox = await page.$('div[class="box01 box firstBox"]')
-    await divbox.click('a');
+    await divbox.click("a");
     await page.waitFor(5000);
 
     let arrayDate = [];
@@ -38,11 +38,11 @@ puppeteer.launch({
 
     for(table of tables){
 
-        const trs = await table.$$('tr')
+        const trs = await table.$$("tr")
 
         for(tr of trs){
 
-            let tempArray = await tr.$$eval('th', items => {
+            let tempArray = await tr.$$eval("th", items => {
 
                 let retArray = [];
 
@@ -61,22 +61,37 @@ puppeteer.launch({
 
             tempArray = await utils.asyncTransformTr2Array(tr);
 
-            console.log("tempArray:", tempArray);
+            console.log("tempArray[0]", tempArray[0]);
 
+            if(tempArray[0].indexOf("使用日数") != -1){
+                Array.prototype.push.apply(arrayDaysUsed, tempArray);
+            }
+
+            if(tempArray[0].match(/使用量/)){
+                Array.prototype.push.apply(arrayAmountUsed, tempArray);
+            }
+
+            if(tempArray[0].match(/請求金額/)){
+                Array.prototype.push.apply(arrayCharge, tempArray);
+            }
 
         }
 
 
     }
 
+    console.log("arrayDayUsed:", arrayDaysUsed)
+    console.log("arrayAmountUse:", arrayAmountUse)
+    console.log("arrayCharge:", arrayCharge)
+
     //結果をファイルに出力
-    fs.writeFile('result.csv', arrayDate.toString(),(err) => {
+    fs.writeFile("result.csv", arrayDate.toString(),(err) => {
         if (err) throw err;
-       console.log('done');
+       console.log("done");
     });
 
 
-    await page.screenshot({path: 'screenshot2.png'});
+    //await page.screenshot({path: "screenshot2.png"});
     browser.close();
   });
   

@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 
-async function asyncTransformTr2Array(tr){
-
-    console.log("test");
+exports.asyncTransformTr2Array = async (tr) => {
 
     let retArray = await tr.$$eval('td', items => {
 
