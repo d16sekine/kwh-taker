@@ -10,7 +10,11 @@ exports.asyncTransformTr2Array = async (tr) => {
 
             if(item.textContent === "年月" || item.textContent === "使用日数" || item.textContent === "使用量") continue;
 
-            tempArray.push(item.textContent);
+            let tempStr = item.textContent;
+
+            tempStr = tempStr.replace(",", ""); //円表示のカンマを削除
+
+            tempArray.push(tempStr);
 
         }
 

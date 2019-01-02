@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/d16sekine/kwh-taker#readme",
   "dependencies": {
+    "csv": "^5.1.0",
     "js-yaml": "^3.12.0",
     "puppeteer": "^1.11.0"
   },
